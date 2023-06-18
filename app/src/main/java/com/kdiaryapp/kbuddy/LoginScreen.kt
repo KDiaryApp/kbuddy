@@ -29,6 +29,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.RemoveRedEye
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
@@ -42,6 +47,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
@@ -56,6 +65,10 @@ import androidx.compose.ui.res.colorResource
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -167,8 +180,9 @@ fun LoginScreen() {
         }
 
         /*
-                TODO - They're still not properly set to in a properly layout.
-            */
+            TODO
+                - They're still not properly set to in a proper layout.
+        */
         Column(
             verticalArrangement = Arrangement.SpaceAround,
 //                horizontalAlignment = Alignment.CenterHorizontally,
@@ -177,17 +191,67 @@ fun LoginScreen() {
                 .weight(3F)
         ) {
             val roundedCornerSize = 10.dp
+            var email by remember { mutableStateOf("") }
             TextField(
-                value = "Email",
-                onValueChange = { value -> },
+                value = email,
+                placeholder = {
+                    Text(
+                        text = "Email",
+                        color = Color.LightGray
+                    )
+                },
+                onValueChange = {
+                    email = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                   onNext = {
+                       // TODO: Change the focus to the next UI element, namely the password field
+                   }
+                ),
                 modifier = Modifier
                     .clip(RoundedCornerShape(roundedCornerSize))
             )
+            var password by remember { mutableStateOf("") }
+            var passwordVisibility by remember { mutableStateOf(true) }
             TextField(
-                value = "Password",
-                onValueChange = { value -> },
+                value = password,
+                placeholder = {
+                    Text(
+                        text = "Password",
+                        color = Color.LightGray
+                    )
+                },
+                onValueChange = {
+                    password = it
+                },
+                visualTransformation = if (passwordVisibility) PasswordVisualTransformation() else VisualTransformation.None,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            passwordVisibility = !passwordVisibility
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.RemoveRedEye,
+                            contentDescription = null,
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        // TODO: Maybe the callback here should be the same as for the 'Login Now' button.
+                    }
+                ),
                 modifier = Modifier
-//                        .clip(RoundedCornerShape(roundedCornerSize))
+                    .clip(RoundedCornerShape(roundedCornerSize))
             )
             Row(
                 modifier = Modifier
@@ -196,7 +260,7 @@ fun LoginScreen() {
                 Text(
                     text = "Forgot Password?",
                     fontStyle = FontStyle.Italic,
-                    fontWeight = FontWeight.Light,
+                    fontWeight = FontWeight.Medium,
                     color = Color.Gray
                 )
                 //            .height(intrinsicSize = IntrinsicSize.Max)
